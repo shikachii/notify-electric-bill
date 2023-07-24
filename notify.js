@@ -42,6 +42,7 @@ const queries = {
 
 const API_URL = "https://api.oejp-kraken.energy/v1/graphql/";
 const properties = PropertiesService.getUserProperties();
+const scriptProperties = PropertiesService.getScriptProperties();
 
 const getDateSTr = () => {
   const iso = new Date().toISOString();
@@ -106,15 +107,13 @@ function getElectricBill() {
     }, 0.0)
     console.log(`${totalCost}円`)
 
-    GmailApp.sendEmail("shikachii095+notifyElectricBill@gmail.com", "電気代通知", `昨日の電気代は ${totalCost} 円でした．\n\n https://octopusenergy.co.jp/account/A-99F3E7A3/usage`)
+    GmailApp.sendEmail(scriptProperties.getProperty("destination"), "電気代通知", `昨日の電気代は ${totalCost} 円でした．\n\n https://octopusenergy.co.jp/account/A-99F3E7A3/usage`)
   } catch(err) {
     console.error(err)
   }
 }
 
 function refreshToken() {
-  const scriptProperties = PropertiesService.getScriptProperties();
-
   const query = `mutation login($input: ObtainJSONWebTokenInput!) {
     obtainKrakenToken(input: $input) {
       token
